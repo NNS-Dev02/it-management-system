@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="logo">
+      <img src="logo.png" alt="MiT Logo">
+    </div>
+
+    <!-- chỉ admin mới thấy -->
+    <button id="btnUser" onclick="showPage('user')">Quản lí Tài khoản</button>
+
+    <button onclick="showPage('company')">Quản lí Công ty</button>
+  </div>
+
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+
+    <!-- ===== TOPBAR ===== -->
+    <div class="topbar">
+      <div id="userInfo"></div>
+      <button onclick="logout()">Đăng xuất</button>
+    </div>
+
+
+    <!-- ================= USER PAGE ================= -->
+    <div id="pageUser" class="page">
+
+      <div class="card">
+        <h1>TRANG QUẢN LÍ TÀI KHOẢN</h1>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Tài khoản</th>
+              <th>Quyền</th>
+              <th>Tên nhân viên</th>
+              <th>Được phép xem Công ty</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="userList"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+
+    <!-- ================= COMPANY PAGE ================= -->
+    <div id="pageCompany" class="page" style="display:none;">
+
+      <!-- ===== FORM ADD (ADMIN ONLY) ===== -->
+      <div id="addCompanyBox" class="card">
+
+        <h1>TRANG QUẢN LÍ CÔNG TY</h1>
+
+        <h3>Thêm Công ty mới</h3>
+
+        <div class="form grid">
+          <input id="companyName" placeholder="Tên Công ty">
+          <input id="companyAddress" placeholder="Địa chỉ">
+          <input id="companySale" placeholder="Sale đảm nhiệm">
+        </div>
+
+        <button onclick="addCompany()" class="btn-primary">
+          Thêm Công ty
+        </button>
+
+      </div>
+
+
+      <!-- ===== LIST COMPANY ===== -->
+      <div class="card">
+        <h3>Danh sách các Công ty</h3>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th onclick="sortByName()" style="cursor:pointer;">
+              Tên công ty ⬍
+            </th>
+              <th>Địa chỉ</th>
+              <th onclick="sortBySale()" style="cursor:pointer;">
+                Sale phụ trách ⬍
+              </th>
+
+              <th id="colIT" onclick="sortByIT()" style="cursor:pointer;">
+                IT có thể xem ⬍
+              </th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="companyList"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= POPUP ASSIGN ================= -->
+<div id="popup" class="popup" style="display:none;">
+  <div class="popup-content">
+
+    <span class="popup-close" onclick="closePopup()">✖</span>
+
+    <h3>Chọn Công ty</h3>
+
+    <input 
+      type="text" 
+      placeholder="🔍 Tìm công ty..." 
+      oninput="filterCompany(this.value)"
+      style="width:100%; margin-bottom:10px;"
+    >
+
+    <div id="companyCheckboxList"></div>
+
+    <div style="margin-top:15px;">
+      <button onclick="saveAssign()">Lưu</button>
+      <button onclick="closePopup()">Hủy</button>
+    </div>
+
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>

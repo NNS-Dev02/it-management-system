@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết công ty</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="logo">
+      <img src="logo.png" alt="MiT Logo">
+    </div>
+
+    <button id="btnUser" onclick="goPage('user')">Quản lí Tài khoản</button>
+    <button onclick="goPage('company')">Quản lí Công ty</button>
+  </div>
+
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+
+    <!-- ===== TOPBAR ===== -->
+    <div class="topbar">
+      <div id="userInfo"></div>
+      <button onclick="logout()">Đăng xuất</button>
+    </div>
+
+    <h1>CHI TIẾT CÔNG TY</h1>
+
+    <!-- ===== TABS ===== -->
+    <div class="tabs">
+      <button onclick="showTab('overview')" id="tabBtnOverview">Tổng quan</button>
+      <button onclick="showTab('device')" id="tabBtnDevice">Thiết bị</button>
+      <button onclick="showTab('user')" id="tabBtnUser">Người dùng</button>
+    </div>
+
+
+    <!-- ================= TAB: OVERVIEW ================= -->
+    <div id="tab-overview" class="tab-content">
+
+      <div class="card">
+        <h3>Thông tin công ty</h3>
+
+        <div class="info-grid">
+          <div><b>Tên công ty:</b> <span id="cName"></span></div>
+          <div><b>Địa chỉ:</b> <span id="cAddress"></span></div>
+          <div><b>Sale phụ trách:</b> <span id="cSale"></span></div>
+        </div>
+
+        <div id="itAccessBox">
+          <h3>Danh sách IT được xem</h3>
+          <ul id="cUsers"></ul>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= TAB: DEVICE ================= -->
+    <div id="tab-device" class="tab-content" style="display:none;">
+
+      <!-- ADD / EDIT DEVICE -->
+      <div class="card">
+        <h3>Thêm / Sửa thiết bị mạng</h3>
+
+        <div class="form grid">
+          <input id="dType" placeholder="Loại (Firewall, Switch...)" />
+          <input id="dName" placeholder="Tên thiết bị" />
+          <input id="dSerial" placeholder="Serial" />
+          <input id="dIP" placeholder="IP" />
+          <input id="dMAC" placeholder="MAC" />
+          <input id="dNote" placeholder="Ghi chú" />
+        </div>
+
+        <button id="btnAddDevice" onclick="addDevice()" class="btn-primary">
+          Thêm thiết bị
+        </button>
+      </div>
+
+      <!-- LIST DEVICE -->
+      <div class="card">
+        <h3>Danh sách thiết bị mạng</h3>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th onclick="sortByType()" style="cursor:pointer;">Loại ⬍</th>
+              <th onclick="sortByName()" style="cursor:pointer;">Tên ⬍</th>
+              <th>Serial</th>
+              <th>IP</th>
+              <th>MAC</th>
+              <th>Ghi chú</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="networkTable"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+
+    <!-- ================= TAB: USER ================= -->
+    <div id="tab-user" class="tab-content" style="display:none;">
+
+      <!-- ADD / EDIT USER -->
+      <div class="card">
+        <h3>Thêm / Sửa người dùng</h3>
+
+        <div class="form grid">
+          <input id="uName" placeholder="Họ tên">
+          <input id="uMail" placeholder="Email">
+          <input id="uWindows" placeholder="Hệ điều hành">
+          <input id="uKey" placeholder="Key Windows">
+          <input id="uRole" placeholder="Chức vụ">
+          <input id="uBitlocker" placeholder="Bitlocker">
+          <input id="uNote" placeholder="Ghi chú">
+        </div>
+
+        <button id="btnAddUser" onclick="addUser()" class="btn-primary">
+          Thêm người dùng
+        </button>
+      </div>
+
+      <!-- LIST USER -->
+      <div class="card">
+        <h3>Danh sách người dùng</h3>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Họ tên</th>
+              <th>Mail</th>
+              <th>Windows</th>
+              <th>Key</th>
+              <th>Bitlocker</th>
+              <th>Chức vụ</th>
+              <th>Ghi chú</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="userTable"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/company.js"></script>
+
+</body>
+</html>

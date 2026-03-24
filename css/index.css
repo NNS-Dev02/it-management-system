@@ -1,0 +1,89 @@
+/* =========================
+   🔐 LOGIN PAGE ONLY
+========================= */
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #2c4b7c, #3a5fa0);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* ===== LOGIN CARD ===== */
+.box {
+  width: 350px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+
+/* ===== LOGO ===== */
+.logo-img {
+  width: 100px;
+  margin-bottom: 15px;
+}
+
+
+/* ===== TITLE ===== */
+.title {
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #333;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+
+/* ===== INPUT ===== */
+input {
+  width: 100%;
+  padding: 11px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b6db3;
+}
+
+
+/* ===== BUTTON ===== */
+button {
+  width: 100%;
+  padding: 11px;
+  margin-top: 10px;
+  background: #2f5597;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #24447a;
+}
+
+
+/* ===== SWITCH LINK ===== */
+.switch {
+  margin-top: 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #3b6db3;
+}
+
+.switch:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT System Login</title>
+
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/index.css">
+
+</head>
+
+<body class="login">
+
+<div class="login-container">
+
+  <!-- CARD -->
+  <div class="login-card">
+
+    <!-- LOGO -->
+    <div class="logo">
+      <img src="logo.png" alt="logo">
+    </div>
+
+    <!-- TITLE -->
+    <div class="login-title">
+      HỆ THỐNG QUẢN LÍ DOANH NGHIỆP<br>
+      <span>CÔNG CỤ DÀNH CHO IT</span>
+    </div>
+
+    <!-- ===== LOGIN ===== -->
+    <div id="loginForm">
+
+      <input id="loginUser" placeholder="Tài khoản" autocomplete="off">
+      <input id="loginPass" type="password" placeholder="Mật khẩu">
+
+      <button onclick="login()" class="btn-primary">Đăng nhập</button>
+
+      <div class="switch" onclick="showRegister()">
+        Tạo tài khoản mới
+      </div>
+
+    </div>
+
+
+    <!-- ===== REGISTER ===== -->
+    <div id="registerForm" style="display:none;">
+
+      <input id="regFullName" placeholder="Họ và tên">
+      <input id="regUser" placeholder="Tài khoản" autocomplete="off">
+      <input id="regPass" type="password" placeholder="Mật khẩu">
+      <input id="regPass2" type="password" placeholder="Nhập lại mật khẩu">
+
+      <button onclick="register()" class="btn-primary">Tạo tài khoản</button>
+
+      <div class="switch" onclick="showLogin()">
+        Quay lại đăng nhập
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- JS -->
+<script src="js/index.js"></script>
+
+</body>
+</html>
