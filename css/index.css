@@ -87,3 +87,95 @@ button:hover {
 .switch:hover {
   text-decoration: underline;
 }
+
+/* =========================
+   🔐 LOGIN EXTRA
+========================= */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-card {
+  width: 350px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.login-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.login-title span {
+  font-size: 13px;
+  color: #777;
+}
+
+.switch {
+  margin-top: 12px;
+  color: #3b6db3;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.switch:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   🔐 LOGIN PAGE
+========================= */
+body.login {
+  background: linear-gradient(135deg, #2c4b7c, #3a5fa0);
+}
+
+/* =========================
+   🔹 GLOBAL / RESET
+========================= */
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f5f6f8;
+}
+
+
+/* =========================
+   🔐 LOGIN PAGE
+========================= */
+body.login {
+  background: linear-gradient(135deg, #2c4b7c, #3a5fa0);
+}
+
+
+/* =========================
+   🧱 LAYOUT
+========================= */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main {
+  margin-left: 220px;
+  flex: 1;
+  padding: 25px 35px;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* login logo */
+.login-card .logo img {
+  width: 110px;
+  filter: none; /* 🔥 fix mất logo */
+}

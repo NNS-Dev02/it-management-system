@@ -71,6 +71,7 @@
 
         <div class="form grid">
           <input id="companyName" placeholder="Tên Công ty">
+          <input id="companyCode" placeholder="Mã công ty">
           <input id="companyAddress" placeholder="Địa chỉ">
           <input id="companySale" placeholder="Sale đảm nhiệm">
         </div>
@@ -86,20 +87,21 @@
       <div class="card">
         <h3>Danh sách các Công ty</h3>
 
+        <input 
+          type="text" 
+          placeholder="🔍 Tìm công ty..." 
+          oninput="searchCompany(this.value)"
+          style="margin-bottom:10px; width:300px;"
+        >
+
         <table class="table">
           <thead>
             <tr>
-              <th onclick="sortByName()" style="cursor:pointer;">
-              Tên công ty ⬍
-            </th>
-              <th>Địa chỉ</th>
-              <th onclick="sortBySale()" style="cursor:pointer;">
-                Sale phụ trách ⬍
-              </th>
-
-              <th id="colIT" onclick="sortByIT()" style="cursor:pointer;">
-                IT có thể xem ⬍
-              </th>
+              <th onclick="sortByField('code')" style="cursor:pointer;">Mã công ty ⬍</th>
+              <th onclick="sortByField('name')" style="cursor:pointer;"> Tên công ty ⬍</th>
+              <th onclick="sortByField('address')" style="cursor:pointer;">  Địa chỉ ⬍</th>
+              <th onclick="sortByField('sale')" style="cursor:pointer;">Sale phụ trách ⬍</th>
+              <th id="colIT" onclick="sortByIT()" style="cursor:pointer;">IT có thể xem ⬍</th>
               <th>Thao tác</th>
             </tr>
           </thead>
@@ -139,6 +141,13 @@
   </div>
 </div>
 
+<div id="confirmBox" class="popup" style="display:none;">
+  <div class="popup-content">
+    <h3 id="confirmText">Xác nhận?</h3>
+    <button onclick="confirmYes()">OK</button>
+    <button onclick="confirmNo()">Hủy</button>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/dashboard.js"></script>

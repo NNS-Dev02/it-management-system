@@ -14,7 +14,7 @@ let deviceData = [];
 let currentSort = "asc";
 let editingDeviceId = null;
 let editingUserId = null;
-
+let userData = [];
 
 // =======================
 // 👤 CURRENT USER
@@ -54,7 +54,7 @@ function getCompanyId() {
 // =======================
 async function loadCompany() {
   const id = getCompanyId();
-  if (!id) return alert("Không có company_id!");
+  if (!id) return showToast("Không có company_id!");
 
   const { data, error } = await client
     .from("companies")
@@ -67,7 +67,7 @@ async function loadCompany() {
     .eq("id", id)
     .single();
 
-  if (error) return alert("Lỗi load company");
+  if (error) return showToast("Lỗi load company");
 
   cName.innerText = data.name || "";
   cAddress.innerText = data.address || "";
@@ -152,28 +152,6 @@ function editDevice(id) {
   }, 100);
 }
 
-function sortByName() {
-  deviceData.sort((a, b) => {
-    const A = (a.name || "").toLowerCase();
-    const B = (b.name || "").toLowerCase();
-    return currentSort === "asc" ? A.localeCompare(B) : B.localeCompare(A);
-  });
-
-  currentSort = currentSort === "asc" ? "desc" : "asc";
-  renderDevices(deviceData);
-}
-
-function sortByType() {
-  deviceData.sort((a, b) => {
-    const A = (a.type || "").toLowerCase();
-    const B = (b.type || "").toLowerCase();
-    return currentSort === "asc" ? A.localeCompare(B) : B.localeCompare(A);
-  });
-
-  currentSort = currentSort === "asc" ? "desc" : "asc";
-  renderDevices(deviceData);
-}
-
 async function addDevice() {
   const company_id = getCompanyId();
 
@@ -188,7 +166,7 @@ async function addDevice() {
   };
 
   if (!payload.name || !payload.type) {
-    return alert("Nhập Loại + Tên thiết bị");
+    return showToast("Nhập Loại + Tên thiết bị", "error");
   }
 
   let error;
@@ -200,16 +178,20 @@ async function addDevice() {
       .eq("id", editingDeviceId);
 
     error = res.error;
+
+    showToast("✏️ Đã cập nhật thiết bị!"); // 🔥 FIX
+
     editingDeviceId = null;
-    document.getElementById("btnAddDevice").innerText = "Thêm";
+    document.getElementById("btnAddDevice").innerText = "Thêm thiết bị";
+
   } else {
     const res = await client.from("network_devices").insert([payload]);
     error = res.error;
+
+    showToast("✅ Đã thêm thiết bị mới!"); // 🔥 FIX
   }
 
-  if (error) return alert(error.message);
-
-  alert("Đã lưu thiết bị!");
+  if (error) return showToast(error.message, "error");
 
   ["dType","dName","dSerial","dIP","dMAC","dNote"]
     .forEach(id => document.getElementById(id).value = "");
@@ -218,8 +200,8 @@ async function addDevice() {
 }
 
 async function deleteDevice(id) {
-  if (!confirm("Xóa thiết bị?")) return;
   await client.from("network_devices").delete().eq("id", id);
+  showToast("❌ Đã xóa thiết bị!");
   loadNetworkDevices(getCompanyId());
 }
 
@@ -233,7 +215,8 @@ async function loadUsers(company_id) {
     .select("*")
     .eq("company_id", company_id);
 
-  renderUsers(data || []);
+  userData = data || [];   // 🔥 QUAN TRỌNG
+  renderUsers(userData);
 }
 
 function renderUsers(data) {
@@ -302,7 +285,7 @@ async function addUser() {
     note: uNote.value
   };
 
-  if (!payload.full_name) return alert("Nhập tên");
+  if (!payload.full_name) return showToast("Nhập tên", "error");
 
   let error;
 
@@ -313,26 +296,30 @@ async function addUser() {
       .eq("id", editingUserId);
 
     error = res.error;
+
+    showToast("✏️ Đã cập nhật người dùng!"); // 🔥 FIX
+
     editingUserId = null;
-    document.getElementById("btnAddUser").innerText = "Thêm";
+    document.getElementById("btnAddUser").innerText = "Thêm người dùng";
+
   } else {
     const res = await client.from("company_users").insert([payload]);
     error = res.error;
+
+    showToast("✅ Đã thêm người dùng mới!"); // 🔥 FIX
   }
 
-  if (error) return alert(error.message);
+  if (error) return showToast(error.message, "error");
 
-  alert("Đã lưu người dùng!");
-
-["uName","uMail","uWindows","uKey","uBitlocker","uRole","uNote"]
-  .forEach(id => document.getElementById(id).value = "");
+  ["uName","uMail","uWindows","uKey","uBitlocker","uRole","uNote"]
+    .forEach(id => document.getElementById(id).value = "");
 
   loadUsers(company_id);
 }
 
 async function deleteUser(id) {
-  if (!confirm("Xóa người dùng?")) return;
   await client.from("company_users").delete().eq("id", id);
+  showToast("❌ Đã xóa người dùng!");
   loadUsers(getCompanyId());
 }
 
@@ -354,7 +341,7 @@ function showTab(tab) {
 // =======================
 function goPage(page) {
   if (page === "user" && currentUser.role !== "admin") {
-    return alert("Không có quyền!");
+    return showToast("Không có quyền!");
   }
 
   window.location.href = `dashboard.html?page=${page}`;
@@ -375,4 +362,77 @@ function formatDate(date) {
   if (!date) return "";
   const d = new Date(date);
   return d.toLocaleDateString("vi-VN");
+}
+
+function searchDevice(keyword) {
+  const k = keyword.toLowerCase();
+
+  const filtered = deviceData.filter(d =>
+    (d.name || "").toLowerCase().includes(k) ||
+    (d.type || "").toLowerCase().includes(k) ||
+    (d.ip || "").toLowerCase().includes(k)
+  );
+
+  renderDevices(filtered);
+}
+
+function searchCompanyUser(keyword) {
+  const k = keyword.toLowerCase();
+
+  const filtered = userData.filter(u =>
+    (u.full_name || "").toLowerCase().includes(k) ||
+    (u.email || "").toLowerCase().includes(k) ||
+    (u.windows || "").toLowerCase().includes(k) ||
+    (u.role || "").toLowerCase().includes(k) ||
+    (u.note || "").toLowerCase().includes(k)
+  );
+
+  renderUsers(filtered);
+}
+
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerText = message;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 10);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+function sortDevice(field) {
+  deviceData.sort((a, b) => {
+
+    let A = (a[field] || "").toString().toLowerCase();
+    let B = (b[field] || "").toString().toLowerCase();
+
+    return currentSort === "asc"
+      ? A.localeCompare(B, 'vi', { sensitivity: 'base' })
+      : B.localeCompare(A, 'vi', { sensitivity: 'base' });
+  });
+
+  currentSort = currentSort === "asc" ? "desc" : "asc";
+  renderDevices(deviceData);
+}
+
+function sortUser(field) {
+  userData.sort((a, b) => {
+
+    let A = (a[field] || "").toString().toLowerCase();
+    let B = (b[field] || "").toString().toLowerCase();
+
+    return currentSort === "asc"
+      ? A.localeCompare(B, 'vi', { sensitivity: 'base' })
+      : B.localeCompare(A, 'vi', { sensitivity: 'base' });
+  });
+
+  currentSort = currentSort === "asc" ? "desc" : "asc";
+  renderUsers(userData);
 }

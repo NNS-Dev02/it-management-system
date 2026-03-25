@@ -90,15 +90,24 @@
       <div class="card">
         <h3>Danh sách thiết bị mạng</h3>
 
+        <div style="margin-bottom:10px;">
+          <input 
+            type="text"
+            placeholder="🔍 Tìm thiết bị..."
+            oninput="searchDevice(this.value)"
+            style="width:300px;"
+          >
+        </div>
+
         <table class="table">
           <thead>
             <tr>
-              <th onclick="sortByType()" style="cursor:pointer;">Loại ⬍</th>
-              <th onclick="sortByName()" style="cursor:pointer;">Tên ⬍</th>
-              <th>Serial</th>
-              <th>IP</th>
-              <th>MAC</th>
-              <th>Ghi chú</th>
+              <th onclick="sortDevice('type')" style="cursor:pointer;">Loại ⬍</th>
+              <th onclick="sortDevice('name')" style="cursor:pointer;">Tên ⬍</th>
+              <th onclick="sortDevice('serial')" style="cursor:pointer;">Serial ⬍</th>
+              <th onclick="sortDevice('ip')" style="cursor:pointer;">IP ⬍</th>
+              <th onclick="sortDevice('mac')" style="cursor:pointer;">MAC ⬍</th>
+              <th onclick="sortDevice('note')" style="cursor:pointer;">Ghi chú ⬍</th>
               <th>Thao tác</th>
             </tr>
           </thead>
@@ -135,16 +144,25 @@
       <div class="card">
         <h3>Danh sách người dùng</h3>
 
+        <div style="margin-bottom:10px;">
+          <input 
+            type="text"
+            placeholder="🔍 Tìm người dùng..."
+            oninput="searchCompanyUser(this.value)"
+            style="width:300px;"
+          >
+        </div>
+
         <table class="table">
           <thead>
             <tr>
-              <th>Họ tên</th>
-              <th>Mail</th>
-              <th>Windows</th>
-              <th>Key</th>
-              <th>Bitlocker</th>
-              <th>Chức vụ</th>
-              <th>Ghi chú</th>
+              <th onclick="sortUser('full_name')" style="cursor:pointer;">Họ tên ⬍</th>
+              <th onclick="sortUser('full_name')" style="cursor:pointer;">Mail ⬍</th>
+              <th onclick="sortUser('full_name')" style="cursor:pointer;">Windows ⬍</th>
+              <th onclick="sortUser('full_name')" style="cursor:pointer;">Key ⬍</th>
+              <th onclick="sortUser('full_name')" style="cursor:pointer;">Bitlocker ⬍</th>
+              <th onclick="sortUser('full_name')" style="cursor:pointer;">Chức vụ ⬍</th>
+              <th onclick="sortUser('full_name')" style="cursor:pointer;">Ghi chú ⬍</th>
               <th>Thao tác</th>
             </tr>
           </thead>

@@ -48,7 +48,7 @@ function logout() {
 function showPage(page) {
 
   if (page === "user" && currentUser.role !== "admin") {
-    alert("Bạn không có quyền!");
+    showToast("Bạn không có quyền!");
     return;
   }
 
@@ -75,13 +75,14 @@ async function loadUsersWithCompanies() {
     .select(`
       id, username, role, full_name,
       user_companies (
-        companies (name)
+        companies!user_companies_company_id_fkey (code)
       )
     `);
 
   const html = (data || []).map(u => {
     const companies = (u.user_companies || [])
-      .map(x => x.companies.name)
+      .map(x => x.companies?.code)
+      .filter(Boolean)
       .join(", ");
 
     return `
@@ -106,11 +107,10 @@ async function loadUsersWithCompanies() {
 // ❌ DELETE USER
 // =======================
 async function deleteUser(id) {
-  if (!confirm("Xóa tài khoản?")) return;
-
   await client.from("user_companies").delete().eq("user_id", id);
   await client.from("users").delete().eq("id", id);
 
+  showToast("❌ Đã xóa tài khoản!");
   loadUsersWithCompanies();
 }
 
@@ -125,7 +125,7 @@ async function loadCompanies() {
     const { data } = await client
       .from("companies")
       .select(`
-        id, name, address, sale,
+        id, code, name, address, sale,
         user_companies (
           users (username)
         )
@@ -141,7 +141,7 @@ async function loadCompanies() {
       .from("user_companies")
       .select(`
         companies (
-          id, name, address, sale
+          id, code, name, address, sale
         )
       `)
       .eq("user_id", currentUser.id);
@@ -161,6 +161,7 @@ function renderCompanies(data) {
 
   const html = data.map(c => `
     <tr>
+      <td>${c.code || ""}</td>
       <td>${c.name}</td>
       <td>${c.address || ""}</td>
       <td>${c.sale || ""}</td>
@@ -199,6 +200,7 @@ function editCompany(id) {
 
   // fill data
   companyName.value = c.name || "";
+  companyCode.value = c.code || "";
   companyAddress.value = c.address || "";
   companySale.value = c.sale || "";
 
@@ -222,24 +224,6 @@ function editCompany(id) {
 
     companyName.focus();
   }, 100);
-}
-
-
-// =======================
-// 🔃 SORT SALE
-// =======================
-function sortBySale() {
-  companyData.sort((a, b) => {
-    const A = (a.sale || "").toLowerCase();
-    const B = (b.sale || "").toLowerCase();
-
-    return currentSort === "asc"
-      ? A.localeCompare(B, 'vi', { sensitivity: 'base' })
-      : B.localeCompare(A, 'vi', { sensitivity: 'base' });
-  });
-
-  currentSort = currentSort === "asc" ? "desc" : "asc";
-  renderCompanies(companyData);
 }
 
 
@@ -279,36 +263,51 @@ async function addCompany() {
   if (currentUser.role !== "admin") return;
 
   const name = companyName.value.trim();
+  const code = companyCode.value.trim();
   const address = companyAddress.value.trim();
   const sale = companySale.value.trim();
 
-  if (!name) return alert("Nhập tên công ty");
+  if (!name) {
+    showToast("Nhập tên công ty", "error");
+    return;
+  }
 
   let error;
 
   if (editingCompanyId) {
+    // 👉 UPDATE
     const res = await client
       .from("companies")
-      .update({ name, address, sale })
+      .update({ name, code, address, sale })
       .eq("id", editingCompanyId);
 
     error = res.error;
 
-    editingCompanyId = null;
+    showToast("✏️ Đã cập nhật công ty!");
+
+    editingCompanyId = null; // 🔥 QUAN TRỌNG
+
     document.querySelector("#addCompanyBox button").innerText = "Thêm Công ty";
+
   } else {
+    // 👉 ADD
     const res = await client
       .from("companies")
-      .insert([{ name, address, sale }]);
+      .insert([{ name, code, address, sale }]);
 
     error = res.error;
+
+    showToast("✅ Đã thêm công ty mới!");
   }
 
-  if (error) return alert(error.message);
+  if (error) {
+    showToast(error.message, "error");
+    return;
+  }
 
-  alert("Đã lưu công ty!");
-
+  // reset form
   companyName.value = "";
+  companyCode.value = "";
   companyAddress.value = "";
   companySale.value = "";
 
@@ -322,11 +321,11 @@ async function addCompany() {
 async function deleteCompany(id) {
 
   if (currentUser.role !== "admin") return;
-  if (!confirm("Xóa công ty?")) return;
 
   await client.from("user_companies").delete().eq("company_id", id);
   await client.from("companies").delete().eq("id", id);
 
+  showToast("❌ Đã xóa công ty!");
   loadCompanies();
 }
 
@@ -386,7 +385,7 @@ async function saveAssign() {
     await client.from("user_companies").insert(values);
   }
 
-  alert("Đã cấp quyền!");
+  showToast("✅ Đã cấp quyền!");
 
   closePopup();
   loadUsersWithCompanies();
@@ -452,10 +451,41 @@ function filterCompany(keyword) {
   });
 }
 
-function sortByName() {
+function searchCompany(keyword) {
+  const k = keyword.toLowerCase();
+
+  const filtered = companyData.filter(c =>
+    (c.code || "").toLowerCase().includes(k) ||
+    (c.name || "").toLowerCase().includes(k) ||
+    (c.address || "").toLowerCase().includes(k) ||
+    (c.sale || "").toLowerCase().includes(k)
+  );
+
+  renderCompanies(filtered);
+}
+
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+
+  const icon = type === "error" ? "❌" : "";
+  toast.innerText = `${icon} ${message}`;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.classList.add("show"), 10);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+function sortByField(field) {
   companyData.sort((a, b) => {
-    const A = (a.name || "").toLowerCase();
-    const B = (b.name || "").toLowerCase();
+
+    let A = (a[field] || "").toString().toLowerCase();
+    let B = (b[field] || "").toString().toLowerCase();
 
     return currentSort === "asc"
       ? A.localeCompare(B, 'vi', { sensitivity: 'base' })
